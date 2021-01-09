@@ -1,5 +1,5 @@
 import React from "react";
-import { toast } from 'react-toastify';  
+import { toast } from "react-toastify";
 import ProductList from "./ProductList";
 import StepsHeader from "./StepsHeader";
 import "./styles.css";
@@ -22,7 +22,9 @@ function Orders() {
   useEffect(() => {
     fetchProducts()
       .then((response) => setProducts(response.data))
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        toast.warning("Erro ao listar produtos");
+      });
   }, []);
 
   const handleSelectProduct = (product: Product) => {
@@ -36,23 +38,24 @@ function Orders() {
     } else {
       setSelectedProducts((previous) => [...previous, product]);
     }
-  }
+  };
 
   const handleSubmit = () => {
     const productsIds = selectedProducts.map(({ id }) => ({ id }));
     const payload = {
       ...orderLocation!,
-      products: productsIds
-    }
-  
-    saveOrder(payload).then((response) => {
-      toast.error(`Pedido enviado com sucesso! Nº ${response.data.id}`);
-      setSelectedProducts([]);
-    })
-      .catch(() => {
-        toast.warning('Erro ao enviar pedido');
+      products: productsIds,
+    };
+
+    saveOrder(payload)
+      .then((response) => {
+        toast.error(`Pedido enviado com sucesso! Nº ${response.data.id}`);
+        setSelectedProducts([]);
       })
-  }
+      .catch(() => {
+        toast.warning("Erro ao enviar pedido");
+      });
+  };
 
   return (
     <>
